@@ -100,6 +100,7 @@ for event in longpoll.listen():
         response = event.obj.message['text'].lower()
         chat_id = int(event.obj.message['peer_id']) - 2000000000
         peer_id = event.obj.message['peer_id']
+
         if '#Telegram' in event.obj.message['text']:
             try:
                 if send_telegram(event.obj.message['text']):
@@ -114,10 +115,10 @@ for event in longpoll.listen():
             except Exception as e:
                 ExecptionMsgSend(e)
         KickUser()
-        for i in range(len(event.message.attachments)):
-            url = event.message.attachments[i]['photo']['sizes'][-1]['url']
-            r = requests.get(url, allow_redirects=True)
-            open('telegram.jpg', 'wb').write(r.content)
+        # for i in range(len(event.message.attachments)):
+        #     url = event.message.attachments[i]['photo']['sizes'][-1]['url']
+        #     r = requests.get(url, allow_redirects=True)
+        #     open('telegram.jpg', 'wb').write(r.content)
 
         if event.from_user or event.from_chat and not event.from_group:
             if response.startswith('test'):
@@ -164,17 +165,26 @@ for event in longpoll.listen():
                 except Exception as e:
                     ExecptionMsgSend(e)
             if response.startswith('бот кик') and event.from_chat:
-                if event.obj.message['fwd_messages'][0]['from_id'] != event.obj.message['from_id'] and CheckIsAdmin():
-                    try:
+                print(event.obj.message)
+                try:
+                    if "from_id" in event.obj.message['fwd_messages'][0]:
+                        member_id = event.obj.message['fwd_messages'][0]['from_id']
+                    elif "from_id" in event.obj.message['reply_message']:
+                        member_id = event.obj.message['reply_message']['from_id']
+                        print(event.obj.message['reply_message']['from_id'])
+                    else:
+                        member_id = None
+
+                    if member_id != None and member_id != event.obj.message['from_id'] and CheckIsAdmin():
                         vk.method('messages.removeChatUser', {
                             'chat_id': chat_id,
-                            'member_id': event.obj.message['fwd_messages'][0]['from_id']
+                            'member_id': member_id
                         })
-                    except Exception as e:
-                        SendTestMSG('Произошла ошибка, возможно пользователь является администратором')
-                        ExecptionMsgSend(e)
-                else:
-                    SendTestMSG('Вы не можете себя кикнуть')
+                    else:
+                        SendTestMSG('Вы не можете себя кикнуть')
+                except Exception as e:
+                    SendTestMSG('Произошла ошибка, возможно пользователь является администратором или вы его не указали.')
+
             # if response.find('исключить пользователя') and event.from_chat and CheckIsAdmin():
             #     try:
             #         data = json.loads(event.obj.message['payload'])
