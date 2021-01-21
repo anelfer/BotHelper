@@ -1,4 +1,4 @@
-class vk_bot_func():
+class VkFunc():
     def chat_name_change(self, chat_id, name):
         try:
             vk.method('messages.editChat', {

@@ -1,6 +1,6 @@
 import logging
 import os
-from vk_bot_helper.vk import vk
+from vkhelper.vk import vk
 from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)

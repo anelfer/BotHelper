@@ -6,11 +6,11 @@ import asyncio
 import logging
 from vk_api.bot_longpoll import *
 from dotenv import load_dotenv
-from vk_bot_helper.telegram.telegram import send_telegram
-from vk_bot_helper.discord.discordBot import send_discord
-from vk_bot_helper.vk.func import *
+from vkhelper.telegram.telegram import send_telegram
+from vkhelper.discord.discordBot import send_discord
+from vkhelper.vk.func import *
 
-helper = vk_bot_func()
+helper = VkFunc()
 logger = logging.getLogger(__name__)
 
 for event in longpoll.listen():
