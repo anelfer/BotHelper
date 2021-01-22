@@ -1,28 +1,33 @@
+import vk_api
+
 class VkFunc():
+
+    def __init__(self, vk, chat_id, peer_id, from_id):
+        self.vk = vk
+        self.peer_id = peer_id
+        self.chat_id = chat_id
+        self.from_id = from_id
+
     def chat_name_change(self, chat_id, name):
         try:
-            vk.method('messages.editChat', {
+            self.vk.method('messages.editChat', {
                 'chat_id': chat_id,
                 'title': name
             })
-            vk.method('messages.send', {
-                'peer_id': event.obj.message['peer_id'],
-                'message': 'Название успешно изменено',
-                'random_id': 0
-            })
-        except Exception as e:
-            ExecptionMsgSend(e)
+            self.send_given_msg('Название успешно изменено')
+        except:
+           self.send_given_msg('Произошла непредвиденная ошибка.')
 
     def execption_msg_send(self, e):
-        vk.method('messages.send', {
-            'peer_id': event.obj.message['peer_id'],
+        self.vk.method('messages.send', {
+            'peer_id': self.peer_id,
             'message': e,
             'random_id': 0
         })
 
     def send_given_msg(self, message='Тестовое cообщение'):
-        vk.method('messages.send', {
-            'peer_id': peer_id,
+        self.vk.method('messages.send', {
+            'peer_id': self.peer_id,
             'message': message,
             'random_id': 0
         })
@@ -33,11 +38,11 @@ class VkFunc():
         return None
 
     def check_is_admin(self):
-        check = vk.method('messages.getConversationMembers', {
-            'peer_id': peer_id,
+        check = self.vk.method('messages.getConversationMembers', {
+            'peer_id': self.peer_id,
         })
         for i in check['items']:
-            if i['member_id'] == event.obj.message['from_id']:
+            if i['member_id'] == self.from_id:
                 admin = i.get('is_admin', False)
                 if admin == True:
                     return True
