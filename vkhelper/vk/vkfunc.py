@@ -1,4 +1,8 @@
 import vk_api
+import asyncio
+
+from vkhelper.discord.discordbot import send_discord
+from vkhelper.telegram.telegrambot import send_telegram
 
 class VkFunc():
 
@@ -48,18 +52,19 @@ class VkFunc():
                     return True
         return False
 
-    def forward_to(self, msg):
+    def forward_to(self, msg, HOOK, TELTOKEN, data):
         if '#Tel' in msg:
             try:
-                send_telegram(msg)
-
-                send_given_msg('Сообщение успешно отправлено в телеграм!')
+                send_telegram(msg, TELTOKEN, data)
+                self.send_given_msg('Сообщение успешно отправлено в телеграм!')
             except Exception as e:
-                execption_msg_send(e)
+                self.execption_msg_send(e)
+
         if '#Dis' in msg:
             loop = asyncio.get_event_loop()
             try:
-                loop.run_until_complete(send_discord(msg))  # передайте точку входа
-                send_given_msg('Сообщение успешно отправлено в дискорд!')
-            except Exception as e:
-                execption_msg_send(e)
+                loop.run_until_complete(send_discord(msg, HOOK))  # передайте точку входа
+                self.send_given_msg('Сообщение успешно отправлено в дискорд!')
+            except:
+
+                self.execption_msg_send("Произошла непредвиденная ошибка!")

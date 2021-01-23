@@ -1,18 +1,17 @@
 import vk_api
 import requests
 import json
-import os
 import asyncio
 import logging
 from vk_api.bot_longpoll import *
-from dotenv import load_dotenv
-from vkhelper.telegram.telegram import send_telegram
-from vkhelper.discord.discordbot import send_discord
-from vkhelper.vk.func import *
+
+from vkhelper.vk.vkfunc import *
 
 logger = logging.getLogger(__name__)
 
-def vk_start(longpool, vk):
+from pprint import pprint
+
+def vk_start(longpool, vk, HOOK, TELTOKEN):
     for event in longpool.listen():
         if event.type == VkBotEventType.MESSAGE_NEW:
 
@@ -20,12 +19,14 @@ def vk_start(longpool, vk):
             chat_id = int(event.obj.message['peer_id']) - 2000000000
             peer_id = event.obj.message['peer_id']
             from_id = event.obj.message['from_id']
+            data = event.message
+
+            logger.info(data)  # Logging everyone message
 
             helper = VkFunc(vk, chat_id, peer_id, from_id)
-            logger.info(event.obj.message) #Logging everyone message
-
-            helper.forward_to(event.obj.message['text'])
-
+            helper.forward_to(event.obj.message['text'], HOOK, TELTOKEN, data)
+            print(event.obj.message)
+            print(data)
             if event.from_user or event.from_chat and not event.from_group:
                 if response.startswith('test'):
                     helper.send_given_msg()
@@ -47,7 +48,7 @@ def vk_start(longpool, vk):
                         helper.chat_name_change(chat_id, helper.check_second_line(response))
                     else:
                         helper.send_given_msg('Вы не ввели название')
-                if response.startswith('бот фото') and event.from_chat: #TODO://Пофиксить обновление фоток [[Errno 2] No such file or directory: '../../cache/avatars.jpg']
+                if response.startswith('бот фото') and event.from_chat: #TODO:Пофиксить обновление фоток [[Errno 2] No such file or directory: '../../cache/avatars.jpg']
                     try:
                         url = event.message.attachments[0]['photo']['sizes'][-1]['url']
                         r = requests.get(url, allow_redirects=True)
@@ -73,7 +74,7 @@ def vk_start(longpool, vk):
                         else:
                             member_id = None
 
-                        if member_id != None and member_id != from_id:
+                        if member_id and member_id != from_id:
                             vk.method('messages.removeChatUser', {
                                 'chat_id': chat_id,
                                 'member_id': member_id
