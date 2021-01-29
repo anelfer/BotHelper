@@ -7,6 +7,7 @@ from vk_api.bot_longpoll import *
 
 from vkhelper.vk.vkfunc import *
 
+logging.basicConfig(filename='logs/vkbot.log', filemode='w', format='[%(asctime)s] %(name)s - %(levelname)s - %(message)s', level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 from pprint import pprint
@@ -25,11 +26,13 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
 
             helper = VkFunc(vk, chat_id, peer_id, from_id)
             helper.forward_to(event.obj.message['text'], HOOK, TELTOKEN, data)
-            print(event.obj.message)
-            print(data)
+            # logger.info(f'465.gt3.vkadre.ru/assets/videos/{data.attachments[0]["video"]["access_key"]}-{data.attachments[0]["video"]["id"]}.vk.mp4')
+
             if event.from_user or event.from_chat and not event.from_group:
                 if response.startswith('test'):
                     helper.send_given_msg()
+                if "задали" in response:
+                    helper.send_given_msg("Я вообще хз, реально")
                 if response.startswith('бот пидор'):
                     vk.method('messages.send',
                               {
@@ -40,7 +43,8 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
                 if response.startswith("бот хелп"):
                     helper.send_given_msg('Я могу: \n '
                                    '1) Изменять название беседы с помощью команды ввида: \nбот нейм \nназвание  \n '
-                                   '2) Изменять аватарку беседы с помощью команды ввида: \n бот фото \n и прикрепленная фотография')
+                                   '2) Изменять аватарку беседы с помощью команды ввида: \n бот фото \n и прикрепленная фотография \n'
+                                   '3) Кидать (вхавхахвз) домашку (НЕ МОГУ МОЙ РАЗРАБОТЧИК ДЕБИЛ)00)🗿🗿))')
 
             if event.from_user or event.from_chat and helper.check_is_admin():
                 if response.startswith('бот нейм') and event.from_chat:
@@ -49,7 +53,7 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
                     else:
                         helper.send_given_msg('Вы не ввели название')
                 if response.startswith('бот фото') and event.from_chat: #TODO:Пофиксить обновление фоток [[Errno 2] No such file or directory: '../../cache/avatars.jpg']
-                    try:
+
                         url = event.message.attachments[0]['photo']['sizes'][-1]['url']
                         r = requests.get(url, allow_redirects=True)
                         open('../../cache/avatars.jpg', 'wb').write(r.content)
@@ -62,8 +66,7 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
                         vk.method('messages.setChatPhoto', {
                             'file': photo_res['response'],
                         })
-                    except Exception as e:
-                        helper.execption_msg_send(e)
+
 
                 if response.startswith('бот кик') and event.from_chat:
                     try:

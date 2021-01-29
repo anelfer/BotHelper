@@ -6,10 +6,7 @@ from dotenv import load_dotenv
 import vk_api
 from vk_api.bot_longpoll import *
 
-from aiogram import Bot, types
-from aiogram.dispatcher import Dispatcher
-
-logging.basicConfig(filename='logs/app.log', filemode='w', format='[%(asctime)s] %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(filename='logs/app.log', filemode='w', format='[%(asctime)s] %(name)s - %(levelname)s - %(message)s', level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
 def main():

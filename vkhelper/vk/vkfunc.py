@@ -2,7 +2,7 @@ import vk_api
 import asyncio
 
 from vkhelper.discord.discordbot import send_discord
-from vkhelper.telegram.telegrambot import send_telegram
+from vkhelper.telegram.telegrambot import media_group
 
 class VkFunc():
 
@@ -55,7 +55,7 @@ class VkFunc():
     def forward_to(self, msg, HOOK, TELTOKEN, data):
         if '#Tel' in msg:
             try:
-                send_telegram(msg, TELTOKEN, data)
+                media_group(TELTOKEN, data)
                 self.send_given_msg('Сообщение успешно отправлено в телеграм!')
             except Exception as e:
                 self.execption_msg_send(e)
