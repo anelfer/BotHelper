@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  bot:
+    container_name: bot
+    image: alexonevkbot/vkbot
+    restart: always
+    environment:
+      - VK_TOKEN=${VK_TOKEN}
+      - HOOK_LINK=${HOOK_LINK}
+      - TELE_TOKEN=${TELE_TOKEN}
