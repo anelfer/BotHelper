@@ -25,13 +25,13 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
             logger.info(data)  # Logging everyone message
 
             helper = VkFunc(vk, chat_id, peer_id, from_id)
-            helper.forward_to(event.obj.message['text'], HOOK, TELTOKEN, data)
+            helper.forward_to(HOOK, TELTOKEN, data)
             # logger.info(f'465.gt3.vkadre.ru/assets/videos/{data.attachments[0]["video"]["access_key"]}-{data.attachments[0]["video"]["id"]}.vk.mp4')
 
             if event.from_user or event.from_chat and not event.from_group:
                 if response.startswith('test'):
                     helper.send_given_msg()
-                if "задали" in response:
+                if "задали" in response: #А чо)
                     helper.send_given_msg("Я вообще хз, реально")
                 if response.startswith('бот пидор'):
                     vk.method('messages.send',
@@ -52,8 +52,8 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
                         helper.chat_name_change(chat_id, helper.check_second_line(response))
                     else:
                         helper.send_given_msg('Вы не ввели название')
-                if response.startswith('бот фото') and event.from_chat: #TODO:Пофиксить обновление фоток [[Errno 2] No such file or directory: '../../cache/avatars.jpg']
-
+                if response.startswith('бот фото') and event.from_chat:
+                    try:
                         url = event.message.attachments[0]['photo']['sizes'][-1]['url']
                         r = requests.get(url, allow_redirects=True)
                         open('../../cache/avatars.jpg', 'wb').write(r.content)
@@ -66,7 +66,8 @@ def vk_start(longpool, vk, HOOK, TELTOKEN):
                         vk.method('messages.setChatPhoto', {
                             'file': photo_res['response'],
                         })
-
+                    except Exception as e:
+                        helper.execption_msg_send(e)
 
                 if response.startswith('бот кик') and event.from_chat:
                     try:

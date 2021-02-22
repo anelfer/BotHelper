@@ -3,7 +3,7 @@ version: '3'
 services:
   bot:
     container_name: bot
-    build: .
+    image: alexonevkbot/vkbot
     restart: always
     environment:
       - VK_TOKEN=${VK_TOKEN}

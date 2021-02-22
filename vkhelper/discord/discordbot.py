@@ -1,10 +1,9 @@
-from discord import Webhook, AsyncWebhookAdapter
-import aiohttp
-import os
-from dotenv import load_dotenv
-import asyncio
+from discord_webhook import DiscordWebhook
 
-async def send_discord(msg, HOOK):
-    async with aiohttp.ClientSession() as session:
-        webhook = Webhook.from_url(HOOK, adapter=AsyncWebhookAdapter(session))
-        await webhook.send(msg, username='Тот, кто знает домашку')
+
+def send_discord(data, HOOK):
+    if len(data.attachments) >= 1:
+        pass
+    else:
+        webhook = DiscordWebhook(url=HOOK, content=data.text, username="Тот, кто знает домашку")
+        webhook.execute()
